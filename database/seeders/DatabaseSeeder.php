@@ -6,6 +6,8 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+use function Pest\Laravel\call;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -15,9 +17,21 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // $user = User::create([
+        //     'name' => 'admin',
+        //     'email' => 'admin@gmail.com',
+        //     'password' => 'admin@gmail.com'
+        // ]);
+
+        // $this->call(PermissionSeeder::class);
+        // $this->call(CategorySeeder::class);
+        // $this->call(ProductSeeder::class);
+        // $this->call(ProductImageSeeder::class);
+        // $this->call(InventorySeeder::class);
+        // $this->call(ProductReviewsSeeder::class);
+        // $this->call(DiscountsSeeder::class);
+        // $this->call(ArticleCategoriesSeeder::class);
+        // $this->call(ArticlesSeeder::class);
+        $this->call(ProductArticlesSeeder::class);
     }
 }

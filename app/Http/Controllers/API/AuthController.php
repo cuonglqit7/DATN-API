@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\API\UserRequest;
 use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +20,7 @@ class AuthController extends Controller
             ]);
             $user = User::where('email', request('email'))->first();
 
-            if (!$user || !Hash::check(request('password'), $user->password)) {
+            if (!$user || !Hash::check(request('password'), $user->password) || $user->hasRole(['admin', 'manager'])) {
                 throw ValidationException::withMessages([
                     'email' => ['The provider credentials are incorrect.'],
                 ]);
@@ -43,21 +44,16 @@ class AuthController extends Controller
         }
     }
 
-    public function register()
+    public function register(UserRequest $request)
     {
         try {
-            $data = request()->validate([
-                'name' => 'required',
-                'email' => 'required|email',
-                'password' => 'required|min:8|max:20',
-            ]);
 
-            $user = User::create($data);
+            $user = User::create($request->all());
             $user->syncRoles('user');
-            $token = $user->createToken($user->id)->plainTextToken;
+            $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
-                'token' => $token,
+                'access_token' => $token,
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {
             if ($th instanceof ValidationException) {
@@ -78,7 +74,7 @@ class AuthController extends Controller
             request()->user()->currentAccessToken()->delete();
 
             return response()->json([
-                'message' => 'Đăng xuất thành công'
+                'message' => 'Logged out'
             ]);
         } catch (\Throwable $th) {
             return response()->json([
