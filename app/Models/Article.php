@@ -13,4 +13,9 @@ class Article extends Model
         'article_category_id',
         'status',
     ];
+
+    public function product()
+    {
+        return $this->belongsToMany(Product::class, 'product_articles', 'article_id', 'product_id');
+    }
 }
